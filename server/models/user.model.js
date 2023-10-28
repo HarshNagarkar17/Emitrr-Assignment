@@ -17,6 +17,10 @@ const userSchema = mongoose.Schema({
         required:true,
         trim:true
     },
+    isAdmin:{
+        type:Boolean,
+        default:false
+    },
     level:{
         type:String,
         enum: ["beginner", "intermediate", "experienced"],

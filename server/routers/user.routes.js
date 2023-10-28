@@ -1,8 +1,16 @@
 const router = require("express").Router();
-const {tokenMiddleware} = require("../utils/middleware")
+const { userService } = require("../services");
+const {tokenMiddleware} = require("../utils/middleware");
+const { wrapper } = require("../utils/wrapper");
 
 router.post("/home",tokenMiddleware, async(req, res) => { 
   res.json({user: req.user});
 })
 
+router.post("/isAdmin", tokenMiddleware, wrapper(async(req, res) => {
+    const user = await userService.findUserById(req.user.sub);
+    if(user.isAdmin)
+        return res.json({isAdmin:true})
+    return res.json({isAdmin:false});
+}))
 module.exports = router;

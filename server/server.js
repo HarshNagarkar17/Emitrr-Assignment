@@ -19,6 +19,7 @@ const corsOptions = {
 server.use(cors(corsOptions));
 
 server.use("/api", require("./routers/auth.routes"), require("./routers/user.routes"));
+server.use("/api/question", require("./routers/questions.routes"));
 
 server.use((err, req, res, next) => {
     if (res.headersSent)

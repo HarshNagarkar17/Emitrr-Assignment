@@ -7,6 +7,7 @@ import { See } from "./pages/See";
 import { Profile } from "./pages/Profile";
 import { Admin } from "./pages/Admin";
 import { Register } from "./pages/Register";
+import { PublishQuestion } from "./pages/PublishQuestion";
 function App() {
   return (
     <Routes>
@@ -15,6 +16,7 @@ function App() {
       <Route path="/register" element={<Register/>} />
       <Route path="/quiz" element={<QuizContainer/>} />
       <Route path="/profile" element={<Profile/>} />
+      <Route path="/publish" element={<PublishQuestion/>} />
       <Route path="/see" element={<See/>} />
       <Route path="/admin" element={<Admin/>} />
       <Route path="/results" element={<Results/>} />
