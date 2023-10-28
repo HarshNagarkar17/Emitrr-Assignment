@@ -1,5 +1,4 @@
-// src/components/QuizContainer.js
-import React, { useEffect } from 'react';
+import React, { useEffect,useState } from 'react';
 import styled from 'styled-components';
 import { NavBar } from '../components/NavBar';
 import { useNavigate } from 'react-router-dom';
@@ -22,7 +21,6 @@ const QuizContainerWrapper = styled.div`
   justify-content: space-between;
   padding: 20px;
 `;
-
 const QuizCard = styled.div`
   width: 300px;
   padding: 20px;
@@ -49,24 +47,30 @@ const StartQuizLink = styled.a`
 
 export const Home = () => {
   const navigate = useNavigate();
+  const [userScore, setUserScore] = useState(0);
+
   useEffect(() => {
     try {
       const user = auth();
-      if (!user)
-        navigate("/login")
+      if (!user) navigate("/login");
 
       axios.post(`${config.api}/home`, {}, { headers: user.headers })
         .then((res) => {
-          console.log(res.data);
+          const user = res.data.user;
+          setUserScore(user.score);
         })
         .catch((err) => {
-          console.log(err.response)
-        })
+          console.log(err.response);
+        });
     } catch (error) {
-      alert("error while signing you! please login again");
+      alert("Error while signing you in! Please login again");
       navigate("/login");
     }
-  }, [])
+  }, []);
+
+  // lock other levels based on user score
+  const areIntermediateCardsLocked = userScore <= 50;
+  const isExperiencedCardLocked = userScore <= 100;
 
   return (
     <Container>
@@ -80,15 +84,24 @@ export const Home = () => {
         <QuizCard>
           <QuizTitle>Intermediate Quiz</QuizTitle>
           <QuizDescription>Challenge yourself with intermediate-level questions.</QuizDescription>
-          <StartQuizLink href="#">Start Quiz</StartQuizLink>
+          {areIntermediateCardsLocked ? (
+            <p>Locked (You need a score greater than 50 to unlock)</p>
+          ) : (
+            <StartQuizLink href="#">Start Quiz</StartQuizLink>
+          )}
         </QuizCard>
         <QuizCard>
           <QuizTitle>Experienced Quiz</QuizTitle>
           <QuizDescription>Prove your expertise with advanced questions.</QuizDescription>
-          <StartQuizLink href="#">Start Quiz</StartQuizLink>
+          {isExperiencedCardLocked ? (
+            <p>Locked (You need a score greater than 100 to unlock)</p>
+          ) : (
+            <StartQuizLink href="#">Start Quiz</StartQuizLink>
+          )}
         </QuizCard>
       </QuizContainerWrapper>
     </Container>
   );
 };
+
 
