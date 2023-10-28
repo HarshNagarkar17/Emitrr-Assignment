@@ -79,24 +79,27 @@ export const Home = () => {
         <QuizCard>
           <QuizTitle>Beginner Quiz</QuizTitle>
           <QuizDescription>Test your knowledge at a beginner level.</QuizDescription>
-          <StartQuizLink href="quiz.html">Start Quiz</StartQuizLink>
+          <StartQuizLink href="/quiz">Start Quiz</StartQuizLink>
         </QuizCard>
         <QuizCard>
           <QuizTitle>Intermediate Quiz</QuizTitle>
           <QuizDescription>Challenge yourself with intermediate-level questions.</QuizDescription>
+          {/* will be locked if score is less than 50*/}
           {areIntermediateCardsLocked ? (
             <p>Locked (You need a score greater than 50 to unlock)</p>
           ) : (
-            <StartQuizLink href="#">Start Quiz</StartQuizLink>
+            <StartQuizLink href="/quiz">Start Quiz</StartQuizLink>
           )}
         </QuizCard>
         <QuizCard>
           <QuizTitle>Experienced Quiz</QuizTitle>
           <QuizDescription>Prove your expertise with advanced questions.</QuizDescription>
+          {/* will be locked if score is less than 100*/}
+
           {isExperiencedCardLocked ? (
             <p>Locked (You need a score greater than 100 to unlock)</p>
           ) : (
-            <StartQuizLink href="#">Start Quiz</StartQuizLink>
+            <StartQuizLink href="/quiz">Start Quiz</StartQuizLink>
           )}
         </QuizCard>
       </QuizContainerWrapper>

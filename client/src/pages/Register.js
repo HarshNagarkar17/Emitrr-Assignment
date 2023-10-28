@@ -69,9 +69,23 @@ const SignUpLinkText = styled.a`
     color: #5296dd;
     `;
 
+const ChooseLanguageWrapper = styled.div`
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  `;
+const LanguageSelect = styled.select`
+    width: 70%;
+    padding: 10px;
+    border: 1px solid #d7d7d7;
+    background-color: #ffffff;
+    border-radius: 4px;
+    color: #000000;
+  `;
+
 export const Register = () => {
 
-    const [userData, setuserData] = useState({ username: "", email: "", password: "" });
+    const [userData, setuserData] = useState({ username: "", email: "", password: "",languagePreference:"" });
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -97,6 +111,10 @@ export const Register = () => {
             showError("Weak Password");
             return;
         }
+        if(userData.languagePreference.length === 0) {
+            showError("please select language to learn");
+            return;
+        }
         setLoading(true);
         axios.post(`${config.api}/register`, userData)
             .then((res) => {
@@ -119,6 +137,15 @@ export const Register = () => {
                     <Input type="text" name="username" id="username" placeholder="enter username" onChange={handleChange} required />
                     <Input type="email" name="email" id="email" placeholder="enter email" onChange={handleChange} required />
                     <Input type="password" name="password" id="password" placeholder="enter password" onChange={handleChange} required />
+                    <ChooseLanguageWrapper>
+                        <LanguageSelect name='languagePreference' onChange={handleChange} defaultValue="none">
+                            <option value="none" disabled>Choose language to master</option>
+                            <option value="english">English</option>
+                            <option value="spanish">Spanish</option>
+                            <option value="french">French</option>
+                            <option value="german">German</option>
+                        </LanguageSelect>
+                    </ChooseLanguageWrapper>
                     {loading ? (
                         <Button disabled>Loading...</Button>
                     ) : (
