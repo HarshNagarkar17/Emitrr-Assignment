@@ -5,6 +5,7 @@ import { NavBar } from '../components/NavBar';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import config from "../config/keys";
+import { auth } from "../providers/auth"
 
 const Container = styled.div`
     font-family: "Arial", sans-serif;
@@ -49,19 +50,12 @@ const StartQuizLink = styled.a`
 export const Home = () => {
   const navigate = useNavigate();
   useEffect(() => {
-    const who = localStorage.getItem("who");  // fetching the jwt auth token
-    if (!who)
-      return navigate("/login");
     try {
-      const token = JSON.parse(who);
-      let data = {};
-      data.token = token;
-      const headers = {
-        'Authorization': `Bearer ${data.token}`,
-        'Content-Type': 'application/json'
-      };
+      const user = auth();
+      if (!user)
+        navigate("/login")
 
-      axios.post(`${config.api}/home`,{}, { headers })
+      axios.post(`${config.api}/home`, {}, { headers: user.headers })
         .then((res) => {
           console.log(res.data);
         })
@@ -69,7 +63,7 @@ export const Home = () => {
           console.log(err.response)
         })
     } catch (error) {
-      alert("not able to sign you in! please login again");
+      alert("error while signing you! please login again");
       navigate("/login");
     }
   }, [])
