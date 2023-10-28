@@ -48,7 +48,7 @@ const StartQuizLink = styled.a`
 export const Home = () => {
   const navigate = useNavigate();
   const [userScore, setUserScore] = useState(0);
-
+  const [language, setLanguage] = useState("");
   useEffect(() => {
     try {
       const user = auth();
@@ -58,6 +58,7 @@ export const Home = () => {
         .then((res) => {
           const user = res.data.user;
           setUserScore(user.score);
+          setLanguage(user.languagePreference);
         })
         .catch((err) => {
           console.log(err.response);
@@ -79,7 +80,7 @@ export const Home = () => {
         <QuizCard>
           <QuizTitle>Beginner Quiz</QuizTitle>
           <QuizDescription>Test your knowledge at a beginner level.</QuizDescription>
-          <StartQuizLink href="/quiz">Start Quiz</StartQuizLink>
+          <StartQuizLink href= {`quiz/${language}/beginner`}>Start Quiz</StartQuizLink>
         </QuizCard>
         <QuizCard>
           <QuizTitle>Intermediate Quiz</QuizTitle>
@@ -88,7 +89,7 @@ export const Home = () => {
           {areIntermediateCardsLocked ? (
             <p>Locked (You need a score greater than 50 to unlock)</p>
           ) : (
-            <StartQuizLink href="/quiz">Start Quiz</StartQuizLink>
+            <StartQuizLink href= {`quiz/${language}/intermediate`}>Start Quiz</StartQuizLink>
           )}
         </QuizCard>
         <QuizCard>
@@ -99,7 +100,7 @@ export const Home = () => {
           {isExperiencedCardLocked ? (
             <p>Locked (You need a score greater than 100 to unlock)</p>
           ) : (
-            <StartQuizLink href="/quiz">Start Quiz</StartQuizLink>
+            <StartQuizLink href={`quiz/${language}/experienced`}>Start Quiz</StartQuizLink>
           )}
         </QuizCard>
       </QuizContainerWrapper>

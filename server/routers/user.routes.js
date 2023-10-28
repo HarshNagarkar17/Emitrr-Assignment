@@ -8,10 +8,8 @@ router.post("/home",tokenMiddleware, wrapper(async(req, res) => {
   res.json({user});
 }))
 
-router.post("/isAdmin", tokenMiddleware, wrapper(async(req, res) => {
+router.post("/who", tokenMiddleware, wrapper(async(req, res) => {
     const user = await userService.findUserById(req.user.sub);
-    if(user.isAdmin)
-        return res.json({isAdmin:true})
-    return res.json({isAdmin:false});
+    return res.json({user});
 }))
 module.exports = router;

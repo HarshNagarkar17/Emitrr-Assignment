@@ -6,6 +6,11 @@ const qSchema = new mongoose.Schema({
         trim:true,
         requied:true
     },
+    score:{
+        type:Number,
+        min:1,
+        max:5
+    },
     options:{
         type:[String],
         requied:true

@@ -78,9 +78,9 @@ export const PublishQuestion = () => {
             const user = auth();
             if(!user)
                 navigate("/login")
-            axios.post(`${config.api}/isAdmin`, {}, {headers:user.headers})
+            axios.post(`${config.api}/who`, {}, {headers:user.headers})
                 .then((res) => {
-                    if(!res.data.isAdmin){
+                    if(!res.data.user.isAdmin){
                         alert("You can't access this web page");
                         navigate("/");
                     }
@@ -100,6 +100,7 @@ export const PublishQuestion = () => {
         option2: '',
         option3: '',
         option4: '',
+        score:'',
         rightOption: '',
         level: '',
         language: '',
@@ -122,6 +123,10 @@ export const PublishQuestion = () => {
         }
         if (formData.language.length === 0 || formData.level.length === 0 || formData.rightOption.length === 0) {
             alert("select all below options")
+            return;
+        }
+        if(formData.score.length === 0) {
+            alert("please select score!");
             return;
         }
         const who = localStorage.getItem("who");  // fetching the jwt auth token
@@ -167,6 +172,16 @@ export const PublishQuestion = () => {
 
                     <Label htmlFor="option4">Option 4:</Label>
                     <Input type="text" id="option4" name="option4" onChange={handleChange} />
+
+                    <Label htmlFor="score">Choose Score</Label>
+                    <Select id="score" name="score" onChange={handleChange} defaultValue="none">
+                        <option value="none" disabled>---</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </Select>
 
                     <Label htmlFor="rightOption">Select right option:</Label>
                     <Select id="rightOption" name="rightOption" onChange={handleChange} defaultValue="none">

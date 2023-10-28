@@ -5,7 +5,7 @@ module.exports = {
 
     addQuestion:(data) => {
         try {
-            const {question,option1,option2, level,language,rightOption, ...rest} = data;
+            const {question,option1,option2,score, level,language,rightOption, ...rest} = data;
             let options = [];
             let details = [];
             details.push(level, language, rightOption)
@@ -15,7 +15,7 @@ module.exports = {
                 options.push(rest[key]);
             }
         }
-        return Question.create({title:question, options,details});
+        return Question.create({title:question,score, options,details});
     } catch (error) {
         throw new CustomError(error.message,512);
     }
