@@ -55,14 +55,33 @@ npm i
 Create a \`.env\` file in the server directory and set the following environment variables:
 
 ```bash
-PORT = 
+PORT = portNumber
 URI = mongodburi
 SECRET = secretForJWT
 EMAIL_ID = forNodemailer
 EMAIL_PASSWORD = forNodemailer 
 ```
 
+Start the backend server:
 
+```bash
+npm run dev
+```
 
+Start the client server:
+
+```bash
+npm start
+```
+
+## Usage
+
+- Register a new user account or log in using existing credentials.
+- Choose the language you want to learn from the available options. 
+- Start the language learning exercises and complete them based on their difficulty.
+- Receive feedback and score for each exercise.
+- Track your progress on your user profile page.
+- Visit the leaderboard to see top-performing users in your selected language.
+- Customize your language preferences or reset your progress if needed.
 
 
