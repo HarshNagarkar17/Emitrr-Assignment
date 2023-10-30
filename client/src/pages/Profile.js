@@ -1,7 +1,11 @@
 // src/components/UserProfile.js
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { NavBar } from '../components/NavBar';
+import { useNavigate } from 'react-router-dom';
+import axios from "axios";
+import config from "../config/keys";
+import { auth } from "../providers/auth"
 
 const ProfileContainer = styled.div`
   width: 800px;
@@ -91,37 +95,109 @@ const UpdateButton = styled.button`
   }
 `;
 
+const ResetButton = styled.button`
+  margin-top:4px;
+  background-color: #ff6314;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #e0550d;
+  }
+`;
+
+const languages = ["hindi", "english"];
+
 export const Profile = () => {
+
+  const navigate = useNavigate();
+
+  const [userLanguage, setUserLanguage] = useState("");
+  const [userData, setUserData] = useState({ username: "", email: "", progress: "" ,languagePreference:""});
+  useEffect(() => {
+    try {
+      const user = auth();
+      if (!user) navigate("/login");
+
+      axios.post(`${config.api}/profile`, {}, { headers: user.headers })
+        .then((res) => {
+          const user = res.data.user;
+          setUserLanguage(user.languagePreference);
+          const progress = (user.score / 30) * 100; // counting progress in percentage
+          setUserData({ username: user.username, email: user.email, progress: `${progress}`,languagePreference:user.languagePreference });
+        })
+        .catch((err) => {
+          console.log(err.response);
+        });
+    } catch (error) {
+      alert("Error while signing you in! Please login again");
+      navigate("/login");
+    }
+  }, []);
+
+  const resetData = async() => {
+    try {
+      let data = {username:userData.username};
+      await axios.post(`${config.api}/resetData`, data);
+      setUserData({...userData, progress:"0"});
+    } catch (error) {
+      alert("failed to clear!try again later");
+    }
+  }
+  const submit = async() => {
+    if(userLanguage === userData.languagePreference){
+      alert("select a new language to update!");
+      return;
+    }
+    let data = {language:userLanguage, username:userData.username};
+    try {
+      const res = await axios.post(`${config.api}/updateLanguage`, data);
+      setUserLanguage(userLanguage); // reset the language to re render component;
+      if(res.data.previousResults) {
+        setUserData({...userData, progress:`${res.data.previousResults.score}`, languagePreference:userLanguage});
+        window.location.reload();
+      }else{
+        setUserData({...userData, progress:"0", languagePreference:userLanguage});
+        alert("language updated!");
+      }
+    } catch (error) {
+      alert("Failed to updtae language! try again later")
+    }
+  }
   return (
     <Container>
-        <NavBar/>
-    <ProfileContainer>
-      <Title>User Profile</Title>
-      <UserProfileWrapper>
-        <Label>Name:</Label>
-        <UserText>John Doe</UserText>
-        <Label>Email:</Label>
-        <UserText>johndoe@example.com</UserText>
-        <Label>Progress:</Label>
-        <ProgressWrapper>
-          <ProgressBar>
-            <ProgressBarInner progress="80%"></ProgressBarInner>
-          </ProgressBar>
-          <UserText>80% completed</UserText>
-        </ProgressWrapper>
-      </UserProfileWrapper>
-      <UpdateLanguageWrapper>
-        <UpdateLanguageLabel>Language Preference:</UpdateLanguageLabel>
-        <LanguageSelect>
-          <option value="english">English</option>
-          <option value="spanish">Spanish</option>
-          <option value="french">French</option>
-          <option value="german">German</option>
-          {/* Add more language options as needed */}
-        </LanguageSelect>
-        <UpdateButton>Update Language Preference</UpdateButton>
-      </UpdateLanguageWrapper>
-    </ProfileContainer>
+      <NavBar />
+      <ProfileContainer>
+        <Title>User Profile</Title>
+        <UserProfileWrapper>
+          <Label>Name:</Label>
+          <UserText>{userData.username}</UserText>
+          <Label>Email:</Label>
+          <UserText>{userData.email}</UserText>
+          <Label>Progress:</Label>
+          <ProgressWrapper>
+            <ProgressBar>
+              <ProgressBarInner progress={userData.progress + '%'} ></ProgressBarInner>
+            </ProgressBar>
+            <UserText>{Math.floor(userData.progress)}% completed</UserText>
+          </ProgressWrapper>
+        </UserProfileWrapper>
+        <UpdateLanguageWrapper>
+          <UpdateLanguageLabel>Language Preference:</UpdateLanguageLabel>
+          <LanguageSelect onChange={(e) => setUserLanguage(e.target.value)}>
+            {languages.map((language) => (
+              <option key={language} value={language} selected={language === userLanguage}>
+                {language}
+              </option>
+            ))}
+          </LanguageSelect>
+          <UpdateButton onClick={submit}>Update Language Preference</UpdateButton>
+        </UpdateLanguageWrapper>
+        <ResetButton onClick={resetData}>Reset your data</ResetButton>
+      </ProfileContainer>
     </Container>
   );
 };

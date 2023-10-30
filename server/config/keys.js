@@ -9,9 +9,8 @@ module.exports = {
         emailPassword: process.env.EMAIL_PASSWORD   
     },
     qType :{
-        BEGINNER:"beginner",
-        INTERMEDIATE:"intermediate",
-        EXPERIENCED:"experienced",
-
+        beginner:"1",
+        intermediate:"2",
+        experienced:"3",
     }
 };

@@ -24,8 +24,10 @@ server.use("/api/question", require("./routers/questions.routes"));
 server.use((err, req, res, next) => {
     if (res.headersSent)
         return next(err);
-    if (err instanceof CustomError)
+    if (err instanceof CustomError){
+        console.log(err);
         return res.status(err.statusCode).json({ error: err.message, status: "failed" });
+    }
     else{
         console.log(err)
         res.status(500).json({ error: "Internal Server Error", status: "failed" });

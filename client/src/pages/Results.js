@@ -1,10 +1,9 @@
 import React from 'react'
 import styled from 'styled-components'
 import { NavBar } from '../components/NavBar'
-import { QuizResults } from '../components/QuizResults'
 import { Leaderboard } from '../components/Leaderboard'
 
-export const Results = () => {
+export const Results = ({results,username}) => {
 
     const Container = styled.div`
     font-family: "Arial", sans-serif;
@@ -19,8 +18,7 @@ export const Results = () => {
     return (
         <Container>
             <NavBar/>
-            <QuizResults/>
-            <Leaderboard/>
+            <Leaderboard results={results} username={username}/>
         </Container>
     )
 }

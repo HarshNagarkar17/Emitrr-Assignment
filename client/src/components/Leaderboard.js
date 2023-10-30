@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useEffect, useState} from 'react';
 import styled from 'styled-components';
 
 const LeaderboardContainer = styled.div`
@@ -32,17 +32,25 @@ const TableHeader = styled.th`
 
 const TableRow = styled.tr`
   background-color: ${({ even }) => (even ? '#ddd' : 'transparent')};
+  font-weight: ${({ user }) => (user ? 'bold' : 'normal')}; // Set font-weight to bold for user rows
 `;
 
 const TableData = styled.td`
   padding: 8px 16px;
 `;
 
-export const Leaderboard = () => {
+export const Leaderboard = ({results, username}) => {
+
+  const [showResults, setShowResults] = useState();
+  useEffect(() => {
+    setShowResults(results);
+  }, [results])
+  
   return (
     <LeaderboardContainer>
       <LeaderboardTitle>Leaderboard</LeaderboardTitle>
       <LeaderboardTable>
+
         <thead>
           <TableRow even>
             <TableHeader>Rank</TableHeader>
@@ -50,15 +58,21 @@ export const Leaderboard = () => {
             <TableHeader>Score</TableHeader>
           </TableRow>
         </thead>
+       {
+        showResults === undefined ? (
+          <p>loading...</p>
+        ) : (
         <tbody>
-          {[1, 2, 3, 4, 5, 6, 7, 8].map((rank, index) => (
-            <TableRow even={index % 2 === 0} key={rank}>
-              <TableData>{rank}</TableData>
-              <TableData>Player {rank}</TableData>
-              <TableData>{80 - rank}%</TableData>
+          {showResults.map((user, index) => (
+            <TableRow even={index % 2 === 0} key={index} user={username === user.username }>
+              <TableData>{index+1}</TableData>
+              <TableData>Player {user.username}</TableData>
+              <TableData>{user.score}</TableData>
             </TableRow>
           ))}
         </tbody>
+        )
+       }
       </LeaderboardTable>
     </LeaderboardContainer>
   );

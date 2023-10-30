@@ -13,10 +13,10 @@ const ScoreIndicatorWrapper = styled.div`
   color: #ff6314;
 `;
 
-export const ScoreIndicator = () => {
+export const ScoreIndicator = ({score}) => {
   return (
     <ScoreIndicatorWrapper>
-      <span>Score: 0</span>
+      <span>Score: {score} </span>
     </ScoreIndicatorWrapper>
   );
 };

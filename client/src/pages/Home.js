@@ -47,7 +47,7 @@ const StartQuizLink = styled.a`
 
 export const Home = () => {
   const navigate = useNavigate();
-  const [userScore, setUserScore] = useState(0);
+  const [userLevel, setUserLevel] = useState(0);
   const [language, setLanguage] = useState("");
   useEffect(() => {
     try {
@@ -57,11 +57,12 @@ export const Home = () => {
       axios.post(`${config.api}/home`, {}, { headers: user.headers })
         .then((res) => {
           const user = res.data.user;
-          setUserScore(user.score);
+          setUserLevel(user.level);
           setLanguage(user.languagePreference);
         })
         .catch((err) => {
-          console.log(err.response);
+          alert("Error while signing you in! Please login again");
+          navigate("/login");
         });
     } catch (error) {
       alert("Error while signing you in! Please login again");
@@ -69,9 +70,9 @@ export const Home = () => {
     }
   }, []);
 
-  // lock other levels based on user score
-  const areIntermediateCardsLocked = userScore <= 50;
-  const isExperiencedCardLocked = userScore <= 100;
+  // lock other levels based on user level
+  const areIntermediateCardsLocked = userLevel !== "intermediate";
+  const isExperiencedCardLocked = userLevel !== 'experienced';
 
   return (
     <Container>
@@ -85,9 +86,9 @@ export const Home = () => {
         <QuizCard>
           <QuizTitle>Intermediate Quiz</QuizTitle>
           <QuizDescription>Challenge yourself with intermediate-level questions.</QuizDescription>
-          {/* will be locked if score is less than 50*/}
+          {/* will be locked if score is less than 10*/}
           {areIntermediateCardsLocked ? (
-            <p>Locked (You need a score greater than 50 to unlock)</p>
+            <p>Locked (You need a score greater than 10 to unlock)</p>
           ) : (
             <StartQuizLink href= {`quiz/${language}/intermediate`}>Start Quiz</StartQuizLink>
           )}
@@ -95,10 +96,10 @@ export const Home = () => {
         <QuizCard>
           <QuizTitle>Experienced Quiz</QuizTitle>
           <QuizDescription>Prove your expertise with advanced questions.</QuizDescription>
-          {/* will be locked if score is less than 100*/}
+          {/* will be locked if score is less than 20*/}
 
           {isExperiencedCardLocked ? (
-            <p>Locked (You need a score greater than 100 to unlock)</p>
+            <p>Locked (You need a score greater than 20 to unlock)</p>
           ) : (
             <StartQuizLink href={`quiz/${language}/experienced`}>Start Quiz</StartQuizLink>
           )}

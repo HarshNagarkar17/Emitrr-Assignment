@@ -25,9 +25,8 @@ const NavLink = styled.a`
 export const NavBar = () => {
   return (
     <NavbarWrapper>
-      <NavLink href="#">Quiz</NavLink>
-      <NavLink href="#">Questions</NavLink>
-      <NavLink href="#">Results</NavLink>
+      <NavLink href="/profile">Profile</NavLink>
+      <NavLink href="/">Home</NavLink>
     </NavbarWrapper>
   );
 };

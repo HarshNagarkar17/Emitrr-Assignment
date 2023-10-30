@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import axios from "axios";
-import {useNavigate} from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import config from "../config/keys";
-import {auth} from "../providers/auth";
+import { auth } from "../providers/auth";
 
 const AdminContainer = styled.div`
   width: 800px;
@@ -76,11 +76,11 @@ export const PublishQuestion = () => {
     useEffect(() => {
         try {
             const user = auth();
-            if(!user)
+            if (!user)
                 navigate("/login")
-            axios.post(`${config.api}/who`, {}, {headers:user.headers})
+            axios.post(`${config.api}/who`, {}, { headers: user.headers })
                 .then((res) => {
-                    if(!res.data.user.isAdmin){
+                    if (!res.data.user.isAdmin) {
                         alert("You can't access this web page");
                         navigate("/");
                     }
@@ -92,7 +92,7 @@ export const PublishQuestion = () => {
         } catch (error) {
             alert("error while signing you! please login again");
         }
-            
+
     }, [])
     const initialFormData = {
         question: '',
@@ -100,7 +100,7 @@ export const PublishQuestion = () => {
         option2: '',
         option3: '',
         option4: '',
-        score:'',
+        score: '',
         rightOption: '',
         level: '',
         language: '',
@@ -117,7 +117,7 @@ export const PublishQuestion = () => {
             alert("Please enter a question")
             return;
         }
-        if (formData.option1.length === 0 || formData.option2.length === 0) {
+        if (formData.option1.length === 0 || formData.option2.length === 0) { // two options are mandatory
             alert("first two options are mandatory")
             return;
         }
@@ -125,8 +125,20 @@ export const PublishQuestion = () => {
             alert("select all below options")
             return;
         }
-        if(formData.score.length === 0) {
+        if (formData.score.length === 0) {
             alert("please select score!");
+            return;
+        }
+        const options = [formData.option1, formData.option2];
+        if (formData.option3.length > 0) {
+            options.push(formData.option3);
+        }
+        if (formData.option4.length > 0) {
+            options.push(formData.option4);
+        }
+
+        if (!options.includes(formData[formData.rightOption])) {
+            alert("rightOption must belong to one of the options.");
             return;
         }
         const who = localStorage.getItem("who");  // fetching the jwt auth token
@@ -137,7 +149,7 @@ export const PublishQuestion = () => {
             'Authorization': `Bearer ${data.token}`,
             'Content-Type': 'application/json'
         };
-
+        formData.rightOption = formData[formData.rightOption];
         const valideData = {};
         Object.keys(formData).forEach((key) => {    // passing only filled data
             if (formData[key].trim() !== "")
@@ -145,13 +157,13 @@ export const PublishQuestion = () => {
         })
         axios.post(`${config.api}/question/add`, valideData, { headers })
             .then((res) => {
-                console.log(res.data);
                 alert("Quesion submitted");
                 setFormData(initialFormData);
+                window.location.reload();
             })
+
             .catch((err) => {
                 alert(err.response.data.error)
-                console.log(err.response);
             })
     }
     return (

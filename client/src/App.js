@@ -6,11 +6,13 @@ import { Results } from "./pages/Results";
 import { See } from "./pages/See";
 import { Profile } from "./pages/Profile";
 import { Admin } from "./pages/Admin";
+import {NotFound} from "./pages/NotFound"
 import { Register } from "./pages/Register";
 import { PublishQuestion } from "./pages/PublishQuestion";
 function App() {
   return (
     <Routes>
+      <Route element={<NotFound/>}/>
       <Route path="/" element={<Home/>} />
       <Route path="/login" element={<Login/>} />
       <Route path="/register" element={<Register/>} />
@@ -19,7 +21,7 @@ function App() {
       <Route path="/publish" element={<PublishQuestion/>} />
       <Route path="/see" element={<See/>} />
       <Route path="/admin" element={<Admin/>} />
-      <Route path="/results" element={<Results/>} />
+
     </Routes>
   );
 }

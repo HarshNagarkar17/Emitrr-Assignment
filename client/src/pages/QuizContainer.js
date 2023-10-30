@@ -1,11 +1,11 @@
-// src/components/QuizContainer.js
-import React, { useEffect } from 'react';
+import React, { useEffect, useState,useMemo } from 'react';
 import styled from 'styled-components';
 import { NavBar } from '../components/NavBar';
-import config from "../config/keys"
-import axios from "axios";
+import {Results} from "./Results"
+import config from '../config/keys';
+import axios from 'axios';
 import { ScoreIndicator } from '../components/ScoreIndicator';
-import { useParams, useNavigate } from "react-router-dom"
+import { useParams, useNavigate } from 'react-router-dom';
 import QuestionPalette from '../components/QuestionPalette';
 import { auth } from '../providers/auth';
 
@@ -13,25 +13,25 @@ const QuizContainerWrapper = styled.div`
   width: 800px;
   height: fit-content;
   margin-top: 10px;
-  margin-left:12%;
-  margin-right: 8%;
+  margin-left: 12%;
+  margin-right: 16%;
   padding: 20px;
   background-color: #f5f8fa;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   text-align: center;
-`;
+`
 
 const Container = styled.div`
-    font-family: "Arial", sans-serif;
-    background-color: #f5f8fa; /* Light gray background */
-    color: #000; /* Black text color */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-`
+  font-family: 'Arial', sans-serif;
+  background-color: #f5f8fa;
+  color: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+`;
 const Title = styled.h2`
   font-size: 24px;
   color: #5296dd;
@@ -68,61 +68,143 @@ const SubmitButton = styled.button`
 
 const QuizContainer = () => {
   const { languagePreference, level } = useParams();
+  const [questions, setQuestions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [currentAnswer, setCurrentAnswer] = useState("");
+  const [score, setScore] = useState(0);
+  const [showResults, setShowResults] = useState(false);
+  const [user, setUser] = useState("");
+  const [totalAnswered,setTotalAnswered] = useState(0);
+  const [currentQuestion, setCurrentQuestion] = useState({});
+  const [results, setResults] = useState([]);
+  const [totalQuestions, setTotalQuestions] = useState(0);
   const navigate = useNavigate();
+  const fetchData = async () => {
+    try {
+      const token = auth();
+      if (!token) navigate('/login');
+
+      const whoResponse = await axios.post(`${config.api}/who`, {}, { headers: token.headers });
+
+      const user = whoResponse.data.user;
+      setUser(user.username);
+      if (user.languagePreference !== languagePreference) {
+        alert("This language doesn't belong to your choice!");
+        navigate('/');
+      }
+
+      const canAccessIntermediate = user.level !== "intermediate";
+      const canAccessExperienced = user.level !== 'expreienced';
+      if (level === 'intermediate' && canAccessIntermediate) {
+        alert('You are not eligible for this level!');
+        navigate('/');
+      }
+
+      if (level === 'experienced' && canAccessExperienced) {
+        alert('You are not eligible for this level!');
+        navigate('/');
+      }
+
+      // Fetch questions based on user preferences
+      const quizResponse = await axios.post(`${config.api}/question/${languagePreference}/${level}`, {}, { headers: user.headers });
+      if(quizResponse.data.questions.length == 0) {
+        alert("No questions found for this language and level");
+        navigate("/");
+      }
+      const quizData = quizResponse.data.questions;
+      setQuestions(quizData);
+      setTotalQuestions(quizData.length);
+    } catch (err) {
+      alert('Internal server error!');
+      navigate('/');
+    }
+  };
+  const handleAnswerSubmit = async () => {
+    if(currentAnswer === "") {
+      alert("Please select a value");
+      return;
+    }
+    setLoading(true);
+    // Fetch next questions
+    if (totalQuestions >= 2) {
+      const response = await axios.post(`${config.api}/question/nextQuestion`, { currentQuestion, currentAnswer, questions });
+      setQuestions(response.data.questions);
+      setTotalQuestions(response.data.questions.length);
+      setTotalAnswered(totalAnswered+1);
+      if (response.data.correctOrNot)
+        setScore(score + currentQuestion.score);
+      setCurrentAnswer("");
+    }
+    // the end of the quiz or submit user answers
+    else {
+      let data={};
+      if (currentQuestion.details[2] === currentAnswer) {
+        const newScore = score + currentQuestion.score;
+        data.score = score+currentQuestion.score;
+        setScore(newScore);
+      }else
+        data.score = score;
+      data.user = user;
+      data.language = languagePreference;
+      data.level = level;
+      const response = await axios.post(`${config.api}/question/score`, data);
+      if(response.data.gameCompleted) {
+        alert("you just completed the game!");
+      }
+      setResults(response.data.results);
+      setShowResults(true);
+      alert('End of the quiz. Submit user answers here.');
+    }
+  };
   useEffect(() => {
-    const user = auth();
-    if (!user) navigate("/login");
+    fetchData();
+  }, []);
 
-    axios.post(`${config.api}/who`,{}, {headers:user.headers})
-      .then((res) => {
-        const user = res.data.user;
-        if(user.languagePreference !== languagePreference) {
-          alert("This language doesn't belong to your choice!")
-          navigate("/");
-        }
+  // update questions and set currentQuestion
+  useEffect(() => {
+    if (totalQuestions > 0) {
+      setCurrentQuestion(questions[0]);
+      setLoading(false);
+    }
+  }, [questions, totalQuestions]);
 
-        const canAccessIntermediate = user.score <= 50;
-        const canAccessExperienced = user.score <= 100;
-        if(level === "intermediate" && canAccessIntermediate){
-          alert("You are not eligible for this level!")
-          navigate("/");
-        }
-
-        if(level === "experienced" && canAccessExperienced){
-          alert("You are not eligible for this level!")
-          navigate("/");
-        }
-
-      })
-    
-
-  }, [])
-  return (
-    <Container>
-      <NavBar />
-      <ScoreIndicator />
-      <QuestionPalette />
+  const ShowQuestions = () => {
+    return (
       <QuizContainerWrapper>
-        <Title>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Iusto illo voluptates animi eos quibusdam voluptatem esse,
-        </Title>
+        <Title>{currentQuestion.title}</Title>
         <Options>
-          <Label>
-            <RadioInput type="radio" name="quiz-option" value="option1" /> Option 1
-          </Label>
-          <Label>
-            <RadioInput type="radio" name="quiz-option" value="option2" /> Option 2
-          </Label>
-          <Label>
-            <RadioInput type="radio" name="quiz-option" value="option3" /> Option 3
-          </Label>
-          <Label>
-            <RadioInput type="radio" name="quiz-option" value="option4" /> Option 4
-          </Label>
+          {currentQuestion.options.map((option, index) => (
+            <Label key={index}>
+              <RadioInput
+                type="radio"
+                name="quiz-option"
+                value={option}
+                onClick={(e) => setCurrentAnswer(e.target.value)}
+              />
+              {option}
+            </Label>
+          ))}
         </Options>
-        <SubmitButton>Submit Answer</SubmitButton>
+        <SubmitButton onClick={handleAnswerSubmit}>Submit Answer</SubmitButton>
       </QuizContainerWrapper>
-    </Container>
+    );
+  }
+
+  return (
+    <>
+    {
+      showResults ? (<Results  results={results} username={user} />) : (
+        <Container>
+        <NavBar />
+        <ScoreIndicator score={score} />
+        <QuestionPalette totalAnswered={totalAnswered} totalQuestions={totalQuestions} />
+        {
+          loading ? (<p>loading</p>) : (ShowQuestions())
+        }
+      </Container>
+      )
+    }
+      </>
   );
 };
 
