@@ -11,6 +11,7 @@ up and running it on your local machine.
 - [Features](#features)
 - [Technologies](#technologies)
 - [Setup](#setup)
+- [Usage](#usage)
 
 ## Features
 
