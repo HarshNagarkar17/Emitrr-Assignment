@@ -10,6 +10,7 @@ up and running it on your local machine.
 
 - [Features](#features)
 - [Technologies](#technologies)
+- [Setup](#setup)
 
 ## Features
 
@@ -24,12 +25,42 @@ up and running it on your local machine.
 
 ## Technologies
 
-**Frontend**: React for building the user interface.
-**Backend**: Node.js with Express for building the API.  -
-MongoDB for the database.
-**Authentication**: JWT (JSON Web Tokens) for user authentication.
-**Database Management**: Mongoose for MongoDB interaction.
+- **Frontend**: React for building the user interface.
+- **Backend**: Node.js with Express for building the API.
+- **Authentication**: JWT (JSON Web Tokens) for user authentication.
+- **Database Management**: Mongoose for MongoDB interaction.
 
+## Setup
+
+To run this project on your local machine, follow these steps:
+
+Clone the repository to your local machine:
+
+```bash
+git clone https://github.com/<your-username>/Emitrr-Assignment
+```
+
+Navigate to the project directory:
+
+```bash
+cd Emitrr-Assignment
+```
+
+Install required dependencies for both client and server
+
+```bash
+npm i
+```
+
+Create a \`.env\` file in the server directory and set the following environment variables:
+
+```bash
+PORT = 
+URI = mongodburi
+SECRET = secretForJWT
+EMAIL_ID = forNodemailer
+EMAIL_PASSWORD = forNodemailer 
+```
 
 
 
