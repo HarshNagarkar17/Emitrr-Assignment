@@ -94,7 +94,7 @@ const QuizContainer = () => {
       }
 
       const canAccessIntermediate = user.level !== "intermediate";
-      const canAccessExperienced = user.level !== 'expreienced';
+      const canAccessExperienced = user.level !== 'experienced';
       if (level === 'intermediate' && canAccessIntermediate) {
         alert('You are not eligible for this level!');
         navigate('/');
@@ -148,9 +148,6 @@ const QuizContainer = () => {
       data.language = languagePreference;
       data.level = level;
       const response = await axios.post(`${config.api}/question/score`, data);
-      if(response.data.gameCompleted) {
-        alert("you just completed the game!");
-      }
       setResults(response.data.results);
       setShowResults(true);
       alert('End of the quiz. Submit user answers here.');

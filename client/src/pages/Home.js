@@ -1,4 +1,4 @@
-import React, { useEffect,useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { NavBar } from '../components/NavBar';
 import { useNavigate } from 'react-router-dom';
@@ -50,28 +50,34 @@ export const Home = () => {
   const [userLevel, setUserLevel] = useState(0);
   const [language, setLanguage] = useState("");
   useEffect(() => {
-    try {
-      const user = auth();
-      if (!user) navigate("/login");
+    const fetchData = async () => {
+      try {
+        const user = auth();
 
-      axios.post(`${config.api}/home`, {}, { headers: user.headers })
-        .then((res) => {
-          const user = res.data.user;
-          setUserLevel(user.level);
-          setLanguage(user.languagePreference);
-        })
-        .catch((err) => {
-          alert("Error while signing you in! Please login again");
+        if (!user) {
           navigate("/login");
+          return;
+        }
+
+        const response = await axios.post(`${config.api}/home`, {}, {
+          headers: user.headers,
         });
-    } catch (error) {
-      alert("Error while signing you in! Please login again");
-      navigate("/login");
-    }
+
+        const userData = response.data.user;
+        setUserLevel(userData.level);
+        setLanguage(userData.languagePreference);
+      } catch (error) {
+        localStorage.removeItem("who");
+        alert("Error while signing you in! Please login again");
+        navigate("/login");
+      }
+    };
+
+    fetchData();
   }, []);
 
   // lock other levels based on user level
-  const areIntermediateCardsLocked = userLevel !== "intermediate";
+  const areIntermediateCardsLocked = userLevel !== "intermediate" && userLevel !== "experienced";
   const isExperiencedCardLocked = userLevel !== 'experienced';
 
   return (
@@ -81,7 +87,7 @@ export const Home = () => {
         <QuizCard>
           <QuizTitle>Beginner Quiz</QuizTitle>
           <QuizDescription>Test your knowledge at a beginner level.</QuizDescription>
-          <StartQuizLink href= {`quiz/${language}/beginner`}>Start Quiz</StartQuizLink>
+          <StartQuizLink href={`quiz/${language}/beginner`}>Start Quiz</StartQuizLink>
         </QuizCard>
         <QuizCard>
           <QuizTitle>Intermediate Quiz</QuizTitle>
@@ -90,7 +96,7 @@ export const Home = () => {
           {areIntermediateCardsLocked ? (
             <p>Locked (You need a score greater than 10 to unlock)</p>
           ) : (
-            <StartQuizLink href= {`quiz/${language}/intermediate`}>Start Quiz</StartQuizLink>
+            <StartQuizLink href={`quiz/${language}/intermediate`}>Start Quiz</StartQuizLink>
           )}
         </QuizCard>
         <QuizCard>

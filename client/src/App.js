@@ -9,6 +9,7 @@ import { Admin } from "./pages/Admin";
 import {NotFound} from "./pages/NotFound"
 import { Register } from "./pages/Register";
 import { PublishQuestion } from "./pages/PublishQuestion";
+import { Logout } from "./pages/Logout";
 function App() {
   return (
     <Routes>
@@ -21,6 +22,7 @@ function App() {
       <Route path="/publish" element={<PublishQuestion/>} />
       <Route path="/see" element={<See/>} />
       <Route path="/admin" element={<Admin/>} />
+      <Route path="/logout" element={<Logout/>}/>
 
     </Routes>
   );

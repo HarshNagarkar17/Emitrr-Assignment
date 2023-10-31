@@ -27,6 +27,7 @@ export const NavBar = () => {
     <NavbarWrapper>
       <NavLink href="/profile">Profile</NavLink>
       <NavLink href="/">Home</NavLink>
+      <NavLink href="/logout">Logout</NavLink>
     </NavbarWrapper>
   );
 };

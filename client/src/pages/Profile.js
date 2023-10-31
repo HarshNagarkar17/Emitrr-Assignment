@@ -116,7 +116,7 @@ export const Profile = () => {
   const navigate = useNavigate();
 
   const [userLanguage, setUserLanguage] = useState("");
-  const [userData, setUserData] = useState({ username: "", email: "", progress: "" ,languagePreference:""});
+  const [userData, setUserData] = useState({ username: "", email: "", progress: "" ,languagePreference:"", level: ""});
   useEffect(() => {
     try {
       const user = auth();
@@ -127,7 +127,7 @@ export const Profile = () => {
           const user = res.data.user;
           setUserLanguage(user.languagePreference);
           const progress = (user.score / 30) * 100; // counting progress in percentage
-          setUserData({ username: user.username, email: user.email, progress: `${progress}`,languagePreference:user.languagePreference });
+          setUserData({ username: user.username, email: user.email, progress: `${progress}`,languagePreference:user.languagePreference, level:user.level });
         })
         .catch((err) => {
           console.log(err.response);
@@ -177,7 +177,7 @@ export const Profile = () => {
           <UserText>{userData.username}</UserText>
           <Label>Email:</Label>
           <UserText>{userData.email}</UserText>
-          <Label>Progress:</Label>
+          <Label>Progress of {userData.languagePreference} in current level:</Label>  
           <ProgressWrapper>
             <ProgressBar>
               <ProgressBarInner progress={userData.progress + '%'} ></ProgressBarInner>
