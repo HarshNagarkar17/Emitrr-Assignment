@@ -11,6 +11,7 @@ up and running it on your local machine.
 - [Features](#features)
 - [Technologies](#technologies)
 - [Setup](#setup)
+- [API Documentation](#api-documentation)
 - [Usage](#usage)
 
 ## Features
@@ -74,6 +75,12 @@ Start the client server:
 ```bash
 npm start
 ```
+
+## API Documentation
+
+**Auth routes**:\
+`POST /api/register` - register\
+`POST /api/login` - login\
 
 ## Usage
 
