@@ -90,7 +90,7 @@ npm start
 **Questions routes**:\
 `POST /api/question/add` - add new question\
 `POST /api/question/:language/:level` - fetch user language & level questions\
-`POST /api/question/nextQuestion` - fetch next question based on user's previous answers
+`POST /api/question/nextQuestion` - fetch next question based on user's previous answers\
 `POST /api/question/score` - store user score
 
 
