@@ -17,7 +17,7 @@ up and running it on your local machine.
 ## Features
 
 - Frontend: A user-friendly and interactive frontend for language learning exercises
-- Backend: Backend Development - Backend APIs to handle language learning logic, exercise scoring, and user authentication.
+- Backend: Backend APIs to handle language learning logic, exercise scoring, and user authentication.
 -  Database Management - A database to store user language proficiency levels, progress, and exercise data.
 - Language Selection - Users can choose the language they want to learn from a list of available languages
 - Scoring and Progress Tracking - A scoring system to evaluate user performance in each exercise (0-5) based on question difficulty.
